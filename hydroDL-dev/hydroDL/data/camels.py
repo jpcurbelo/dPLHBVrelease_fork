@@ -28,9 +28,10 @@ attrLstSel = [
 ]
 
 def readGageInfo(dirDB):
-    gageFile = os.path.join(dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
-                            'basin_dataset_public_v1p2', 'basin_metadata',
-                            'gauge_information.txt')
+    # gageFile = os.path.join(dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
+    #                         'basin_dataset_public_v1p2', 'basin_metadata',
+    #                         'gauge_information.txt')
+    gageFile = os.path.join(dirDB, 'basin_metadata', 'gauge_information.txt')
 
     data = pd.read_csv(gageFile, sep='\t', header=None, skiprows=1)
     # header gives some troubles. Skip and hardcode
@@ -46,8 +47,11 @@ def readGageInfo(dirDB):
 def readUsgsGage(usgsId, *, readQc=False):
     ind = np.argwhere(gageDict['id'] == usgsId)[0][0]
     huc = gageDict['huc'][ind]
-    usgsFile = os.path.join(dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
-                            'basin_dataset_public_v1p2', 'usgs_streamflow',
+    # usgsFile = os.path.join(dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
+    #                         'basin_dataset_public_v1p2', 'usgs_streamflow',
+    #                         str(huc).zfill(2),
+    #                         '%08d_streamflow_qc.txt' % (usgsId))
+    usgsFile = os.path.join(dirDB, 'usgs_streamflow',
                             str(huc).zfill(2),
                             '%08d_streamflow_qc.txt' % (usgsId))
     dataTemp = pd.read_csv(usgsFile, sep=r'\s+', header=None)
@@ -93,9 +97,10 @@ def readForcingGage(usgsId, varLst, *, dataset, nt):
     ind = np.argwhere(gageDict['id'] == usgsId)[0][0]
     huc = gageDict['huc'][ind]
 
-    dataFolder = os.path.join(
-        dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
-        'basin_dataset_public_v1p2', 'basin_mean_forcing')
+    # dataFolder = os.path.join(
+    #     dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
+    #     'basin_dataset_public_v1p2', 'basin_mean_forcing')
+    dataFolder = os.path.join(dirDB, 'basin_mean_forcing')
     if dataset == 'daymet':
         tempS = 'cida'
     elif dataset == 'nldas_extended':
@@ -128,8 +133,9 @@ def readForcing(usgsIdLst, varLst, fordata, nt):
 
 
 def readAttrAll(*, saveDict=False):
-    dataFolder = os.path.join(dirDB, 'camels_attributes_v2.0',
-                              'camels_attributes_v2.0')
+    # dataFolder = os.path.join(dirDB, 'camels_attributes_v2.0',
+    #                           'camels_attributes_v2.0')
+    dataFolder = os.path.join(dirDB, 'camels_attributes_v2.0')
     fDict = dict()  # factorize dict
     varDict = dict()
     varLst = list()

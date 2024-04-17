@@ -154,7 +154,7 @@ for ifold in range(1, len(tarIDLst)+1):
 
     # prepare input data
     # load camels dataset
-    if forType is 'daymet':
+    if forType == 'daymet':
         varF = ['prcp', 'tmean']
         varFInv = ['prcp', 'tmean']
     else:

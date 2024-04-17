@@ -1,0 +1,6 @@
+## file extensions
+**/*.pyc
+.env
+
+## folder
+venv-dPLHBVrelease/*

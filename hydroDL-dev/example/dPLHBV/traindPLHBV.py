@@ -82,7 +82,10 @@ else:
 # 'your/path/to/Camels/basin_timeseries_v1p2_metForcing_obsFlow' and 'your/path/to/Camels/camels_attributes_v2.0'
 # Then 'rootDatabase' here should be 'your/path/to/Camels';
 # 'rootOut' is the root dir where you save the trained model
-rootDatabase = os.path.join(os.path.sep, 'scratch', 'Camels')  # CAMELS dataset root directory
+# rootDatabase = os.path.join(os.path.sep, 'scratch', 'Camels')  # CAMELS dataset root directory
+## ../../../../../gladwell/hydrology/SUMMA/summa-ml-models/CAMELS_US
+rootDatabase = os.path.join('../../../../../../', 'gladwell', 'hydrology', 'SUMMA', 'summa-ml-models', 'CAMELS_US')
+
 camels.initcamels(rootDatabase)  # initialize camels module-scope variables in camels.py (dirDB, gageDict) to read basin info
 
 rootOut = os.path.join(os.path.sep, 'data', 'rnnStreamflow')  # Model output root directory
@@ -158,7 +161,7 @@ else:
 
 ## prepare input data
 ## load camels dataset
-if forType is 'daymet':
+if forType == 'daymet':
     varF = ['prcp', 'tmean']
     varFInv = ['prcp', 'tmean']
 else:
@@ -174,6 +177,7 @@ attrnewLst = [ 'p_mean','pet_mean','p_seasonality','frac_snow','aridity','high_p
                'geol_2nd_class', 'glim_2nd_class_frac', 'carbonate_rocks_frac', 'geol_porostiy', 'geol_permeability']
 
 optData = default.optDataCamels # a default dictionary for logging, updated below
+
 # Update the training period and variables
 optData = default.update(optData, tRange=TtrainLoad, varT=varFInv, varC=attrnewLst, subset=TrainLS, forType=forType)
 

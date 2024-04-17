@@ -45,10 +45,11 @@ def readGageInfo(dirDB):
 def readUsgsGage(usgsId, *, readQc=False):
     ind = np.argwhere(gageDict['id'] == usgsId)[0][0]
     huc = gageDict['huc'][ind]
-    usgsFile = os.path.join(dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
-                            'basin_dataset_public_v1p2', 'usgs_streamflow',
-                            str(huc).zfill(2),
-                            '%08d_streamflow_qc.txt' % (usgsId))
+    # usgsFile = os.path.join(dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
+    #                         'basin_dataset_public_v1p2', 'usgs_streamflow',
+    #                         str(huc).zfill(2),
+    #                         '%08d_streamflow_qc.txt' % (usgsId))
+    usgsFile = os.path.join(dirDB, 'usgs_streamflow', str(huc).zfill(2), '%08d_streamflow_qc.txt' % (usgsId))
     dataTemp = pd.read_csv(usgsFile, sep=r'\s+', header=None)
     obs = dataTemp[4].values
     obs[obs < 0] = np.nan
@@ -92,9 +93,10 @@ def readForcingGage(usgsId, varLst=forcingLst, *, dataset='nldas'):
     ind = np.argwhere(gageDict['id'] == usgsId)[0][0]
     huc = gageDict['huc'][ind]
 
-    dataFolder = os.path.join(
-        dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
-        'basin_dataset_public_v1p2', 'basin_mean_forcing')
+    # dataFolder = os.path.join(
+    #     dirDB, 'basin_timeseries_v1p2_metForcing_obsFlow',
+    #     'basin_dataset_public_v1p2', 'basin_mean_forcing')
+    dataFolder = os.path.join(dirDB, 'basin_mean_forcing')
     if dataset is 'daymet':
         tempS = 'cida'
     elif dataset is 'nldas_extended':
@@ -125,8 +127,9 @@ def readForcing(usgsIdLst, varLst):
 
 
 def readAttrAll(*, saveDict=False):
-    dataFolder = os.path.join(dirDB, 'camels_attributes_v2.0',
-                              'camels_attributes_v2.0')
+    # dataFolder = os.path.join(dirDB, 'camels_attributes_v2.0',
+    #                           'camels_attributes_v2.0')
+    dataFolder = os.path.join(dirDB, 'camels_attributes_v2.0')
     fDict = dict()  # factorize dict
     varDict = dict()
     varLst = list()
