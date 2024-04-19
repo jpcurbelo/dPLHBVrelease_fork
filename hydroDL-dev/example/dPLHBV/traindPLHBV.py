@@ -86,9 +86,13 @@ else:
 ## ../../../../../gladwell/hydrology/SUMMA/summa-ml-models/CAMELS_US
 rootDatabase = os.path.join('../../../../../../', 'gladwell', 'hydrology', 'SUMMA', 'summa-ml-models', 'CAMELS_US')
 
+print('rootDatabase:', rootDatabase)    
+
 camels.initcamels(rootDatabase)  # initialize camels module-scope variables in camels.py (dirDB, gageDict) to read basin info
 
-rootOut = os.path.join(os.path.sep, 'data', 'rnnStreamflow')  # Model output root directory
+rootOut = os.path.join('data', 'rnnStreamflow')  # Model output root directory
+
+print('rootOut:', rootOut)
 
 ## set up different data loadings for ALL, PUB, PUR
 testfoldInd = 1
@@ -225,8 +229,21 @@ PETInvUN = PETInvUN[TrainInd, :, :]
 # process data, do normalization and remove nan
 series_inv = np.concatenate([forcInvUN, PETInvUN], axis=2)
 seriesvarLst = varFInv + ['pet']
+
+# print('attrnewLst:', attrnewLst)
+# print('attrsUN:', attrsUN)
+# print('seriesvarLst:', seriesvarLst)
+# print('series_inv:', series_inv)
+
+# sys.exit()
+
+## HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
 # calculate statistics for normalization and saved to a dictionary
 statDict = camels.getStatDic(attrLst=attrnewLst, attrdata=attrsUN, seriesLst=seriesvarLst, seriesdata=series_inv)
+
+# print('statDict:', statDict)
+
 # normalize data
 attr_norm = camels.transNormbyDic(attrsUN, attrnewLst, statDict, toNorm=True)
 attr_norm[np.isnan(attr_norm)] = 0.0
@@ -289,6 +306,7 @@ else:
 
 # Wrap up all the training configurations to one dictionary in order to save into "out" folder as logging
 masterDict = master.wrapMaster(out, optData, optModel, optLoss, optTrain)
+
 master.writeMasterFile(masterDict)
 # log statistics for normalization
 statFile = os.path.join(out, 'statDict.json')

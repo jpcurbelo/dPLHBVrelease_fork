@@ -38,7 +38,7 @@ def readGageInfo(dirDB):
     fieldLst = ['huc', 'id', 'name', 'lat', 'lon', 'area']
     out = dict()
     for s in fieldLst:
-        if s is 'name':
+        if s == 'name':
             out[s] = data[fieldLst.index(s)].values.tolist()
         else:
             out[s] = data[fieldLst.index(s)].values
@@ -143,8 +143,12 @@ def readAttrAll(*, saveDict=False):
     keyLst = ['topo', 'clim', 'hydro', 'vege', 'soil', 'geol']
 
     for key in keyLst:
+    
         dataFile = os.path.join(dataFolder, 'camels_' + key + '.txt')
-        dataTemp = pd.read_csv(dataFile, sep=';')
+        
+        # dataTemp = pd.read_csv(dataFile, sep=';')
+        dataTemp = pd.read_csv(dataFile, sep=';', na_values=[], na_filter=False)
+        
         varLstTemp = list(dataTemp.columns[1:])
         varDict[key] = varLstTemp
         varLst.extend(varLstTemp)
@@ -152,10 +156,20 @@ def readAttrAll(*, saveDict=False):
         nGage = len(gageDict['id'])
         outTemp = np.full([nGage, len(varLstTemp)], np.nan)
         for field in varLstTemp:
+           
+            # if field == 'geol_2nd_class' or field == 'geol_1st_class':
+            #     print('key', key, 'field:', field)
+            #     print('geol_2nd_class', is_string_dtype(dataTemp[field]), type(dataTemp[field][0]))
+            #     print(dataTemp[field].head())
+                
             if is_string_dtype(dataTemp[field]):
+   
                 value, ref = pd.factorize(dataTemp[field], sort=True)
+
                 outTemp[:, k] = value
-                fDict[field] = ref.tolist()
+                
+                fDict[field] = ref.tolist()   
+                
             elif is_numeric_dtype(dataTemp[field]):
                 outTemp[:, k] = dataTemp[field].values
             k = k + 1
@@ -172,7 +186,7 @@ def readAttrAll(*, saveDict=False):
 
 
 def readAttr(usgsIdLst, varLst):
-    attrAll, varLstAll = readAttrAll()
+    attrAll, varLstAll = readAttrAll(saveDict=True)
     indVar = list()
     for var in varLst:
         indVar.append(varLstAll.index(var))
@@ -298,8 +312,12 @@ def readCSV(dataDir, dataRange, varLst, usgsIdLst):
     return x, tdataRangeLst, statcsvDict
 
 def calStat(x):
+    
     a = x.flatten()
     b = a[~np.isnan(a)] # kick out Nan
+    
+    # print('In calStat ...', len(b))
+    
     p10 = np.percentile(b, 10).astype(float)
     p90 = np.percentile(b, 90).astype(float)
     mean = np.mean(b).astype(float)
@@ -309,6 +327,9 @@ def calStat(x):
     return [p10, p90, mean, std]
 
 def calStatgamma(x):  # for daily streamflow and precipitation
+    
+    # print('In calStatgamma ...')
+    
     a = x.flatten()
     b = a[~np.isnan(a)] # kick out Nan
     b = np.log10(np.sqrt(b)+0.1) # do some tranformation to change gamma characteristics
@@ -369,9 +390,14 @@ def calStatAll():
 
 def getStatDic(attrLst = None, attrdata=None, seriesLst = None, seriesdata=None):
     statDict = dict()
+    
+    # print('Ĩn getStatDic ...')
+    # print('seriesLst', seriesLst)
     # series data
     if seriesLst is not None:
         for k in range(len(seriesLst)):
+            # print(f'seriesLst[{k}]', seriesLst[k])
+            # print('seriesdata[:, :, k]', seriesdata[:, :, k])
             var = seriesLst[k]
             if var in ['prcp', 'Precip', 'runoff', 'Runoff', 'Runofferror']:
                 statDict[var] = calStatgamma(seriesdata[:, :, k])
@@ -380,6 +406,12 @@ def getStatDic(attrLst = None, attrdata=None, seriesLst = None, seriesdata=None)
     # const attribute
     if attrLst is not None:
         for k in range(len(attrLst)):
+            # print(f'attrLst[{k}]', attrLst[k])
+            
+            # if attrLst[k] == 'glim_1st_class_frac' or attrLst[k] == 'geol_2nd_class':
+            #     print('attrdata[:, k]', attrdata[:, k])
+            
+            
             var = attrLst[k]
             statDict[var] = calStat(attrdata[:, k])
     return statDict
@@ -478,7 +510,7 @@ def basinNorm(x, gageid, toNorm):
     return flow
 
 def createSubsetAll(opt, **kw):
-    if opt is 'all':
+    if opt == 'all':
         idLst = gageDict['id']
         subsetFile = os.path.join(dirDB, 'Subset', 'all.csv')
         np.savetxt(subsetFile, idLst, delimiter=',', fmt='%d')
@@ -582,9 +614,18 @@ class DataframeCamels(Dataframe):
         return data
 
     def getDataConst(self, *, varLst=attrLstSel, doNorm=True, rmNan=True, SAOpt=None):
+        
+        # print('In getDataConst ...')
+        
         if type(varLst) is str:
             varLst = [varLst]
+            
+        # print('varLst', varLst)   
+            
         data = readAttr(self.usgsId, varLst)
+        
+        # print('data', data)
+        
         if SAOpt is not None:
             SAname, SAfac = SAOpt
             # find the index of target constant

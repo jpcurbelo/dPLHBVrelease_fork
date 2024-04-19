@@ -464,7 +464,7 @@ def basinNorm(x, gageid, toNorm):
 
 
 def createSubsetAll(opt, **kw):
-    if opt is 'all':
+    if opt == 'all':
         idLst = gageDict['id']
         subsetFile = os.path.join(dirDB, 'Subset', 'all.csv')
         np.savetxt(subsetFile, idLst, delimiter=',', fmt='%d')

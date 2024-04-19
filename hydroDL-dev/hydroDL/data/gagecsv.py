@@ -36,7 +36,7 @@ def readGageInfo(dirDB):
     fieldLst = ['huc', 'id', 'name', 'lat', 'lon', 'area']
     out = dict()
     for s in fieldLst:
-        if s is 'name':
+        if s == 'name':
             out[s] = data[fieldLst.index(s)].values.tolist()
         else:
             out[s] = data[fieldLst.index(s)].values
@@ -412,7 +412,7 @@ def basinNorm(x, gageid, toNorm):
     return flow
 
 def createSubsetAll(opt, **kw):
-    if opt is 'all':
+    if opt == 'all':
         idLst = gageDict['id']
         subsetFile = os.path.join(dirDB, 'Subset', 'all.csv')
         np.savetxt(subsetFile, idLst, delimiter=',', fmt='%d')
